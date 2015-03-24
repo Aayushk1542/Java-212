@@ -1,0 +1,248 @@
+import javax.swing.JOptionPane;
+import java.lang.Math;
+
+public abstract class Shape {
+	protected int area;
+	protected int perimeter;
+	
+	public int getArea(){
+		return area;
+	}
+	public int getPerimeter(){
+		return perimeter;
+	}
+	public abstract void calculate();
+	public abstract void resetDimensions();
+
+}//class
+
+
+public class Square extends Shape{
+	private int side;
+	
+	public Square(int x){
+		
+		try{
+			if (x<=0){
+				throw new IllegalNegativeArgumentException("The number entered is too small. It must be greater then zero");
+			} else {
+				side = x;
+			}
+		} catch (IllegalNegativeArgumentException inae){
+			System.out.println("The number entered is too small. So the length will be set to 1 by default");
+			side = 1;
+		}
+		calculate();
+	}
+	public void calculate(){
+		area = side*side;
+		perimeter = side*4;
+		
+	}
+	public void resetDimensions(){
+		String a;
+		a = JOptionPane.showInputDialog(null,"What do you want to set the length of each side to?");
+		try { 
+			side = Integer.parseInt(a);
+			if (side<=0){
+				throw new IllegalNegativeArgumentException("The number entered is too small. It must be greater then zero");
+			} else {	
+			calculate();
+			}
+		} catch (NumberFormatException nfe){
+			JOptionPane.showMessageDialog(null,"You did not enter a number, so no changes were made");
+		} catch (IllegalNegativeArgumentException inae){
+			JOptionPane.showMessageDialog(null,"The number entered is too small. It must be greater then zero");
+		}
+	}
+
+}//class
+
+
+public class RightTriangle extends Shape {
+	private double base;
+	private double height;
+	public RightTriangle(int x,int y){
+		try{
+		if (x<=0||y<=0){
+			throw new IllegalNegativeArgumentException("The numbers entered are too small. They must both be greater then zero");
+		} else {
+			base = x;
+			height = y;
+		}
+		} catch (IllegalNegativeArgumentException inae){
+			System.out.println("The number entered is too small. So the base and height will be set to 1 by default");
+			base = 1;
+			height = 1;
+		}
+		calculate();
+	}
+	public void calculate(){
+		area = (int) ((base*height)/2);
+		perimeter = (int) (base+height+(Math.sqrt((base*base)+(height*height))));
+		
+	}
+	public void resetDimensions(){
+		String a;
+		String b;
+		a = JOptionPane.showInputDialog(null,"What do you want to set the base to?");
+		b = JOptionPane.showInputDialog(null,"What do you want to set the height to?");
+		try { 
+			base = Integer.parseInt(a);
+			height = Integer.parseInt(b);
+			if (base<=0||height<=0){
+				throw new IllegalNegativeArgumentException("One of the two numbers entered is too small. It must be greater then zero");
+			} else {	
+			calculate();
+			}
+		} catch (NumberFormatException nfe){
+			JOptionPane.showMessageDialog(null,"You did not enter a number for base and/or height, so no changes were made");
+		} catch (IllegalNegativeArgumentException inae){
+			JOptionPane.showMessageDialog(null,"One of the two numbers entered is too small. It must be greater then zero");
+		}
+	}
+
+}//class
+
+
+
+public class Rectangle extends Shape {
+	protected int width;
+	protected int length;
+	public Rectangle(int x,int y){
+		try{
+		if (x<=0||y<=0){
+			throw new IllegalNegativeArgumentException("The numbers entered are too small. They must both be greater then zero");
+		} else {
+			width = x;
+			length = y;
+		}
+		} catch (IllegalNegativeArgumentException inae){
+			System.out.println("The number entered is too small. So the length and width will be set to 1 by default");
+			length = 1;
+			width = 1;
+		}
+		calculate();
+	}
+	public Rectangle(int x){}
+//Is ^^^ ok?
+	public void calculate(){
+		area = length*width;
+		perimeter = (length*2)+(width*2);
+		
+	}
+	public void resetDimensions(){
+		String a;
+		String b;
+		a = JOptionPane.showInputDialog(null,"What do you want to set the width to?");
+		b = JOptionPane.showInputDialog(null,"What do you want to set the length to?");
+		try { 
+			width = Integer.parseInt(a);
+			length = Integer.parseInt(b);
+			if (width<=0||length<=0){
+				throw new IllegalNegativeArgumentException("One of the numbers entered is too small. It must be greater then zero");
+			} else {	
+			calculate();
+			}
+			
+		} catch (NumberFormatException nfe){
+			JOptionPane.showMessageDialog(null,"You did not enter a number for with and/or height, so no changes were made");
+		} catch (IllegalNegativeArgumentException inae){
+			JOptionPane.showMessageDialog(null,"One of the two numbers entered is too small. It must be greater then zero");
+		}
+	}
+}//class
+
+
+
+public class Circle extends Shape {
+	private double radius;
+	public Circle(int x){
+		try{
+		if (x<=0){
+			throw new IllegalNegativeArgumentException("The number entered is too small. It must be greater then zero");
+		} else {
+			radius = x;
+		}}
+		catch(IllegalNegativeArgumentException inae){
+			System.out.println("The number entered is too small. So the radius will be set to 1 by default");
+			radius = 1;
+		}
+		calculate();
+	}
+	public void calculate(){
+		area = (int) ((3.14)*radius*radius);
+		perimeter = (int) ((6.28)*radius);
+		
+	}
+	public void resetDimensions(){
+		String a;
+		a = JOptionPane.showInputDialog(null,"What do you want to set the radius to?");
+		try { 
+			radius = Integer.parseInt(a);
+			if (radius<=0){
+				throw new IllegalNegativeArgumentException("The number entered is too small. It must be greater then zero");
+			} else {	
+			calculate();
+			}
+		} catch (NumberFormatException nfe){
+			JOptionPane.showMessageDialog(null,"You did not enter a number, so no changes were made");
+		} catch (IllegalNegativeArgumentException inae){
+			JOptionPane.showMessageDialog(null,"The number entered is too small. It must be greater then zero");
+		}
+	}
+
+}//class
+
+
+public class IllegalNegativeArgumentException extends IllegalArgumentException {
+	public IllegalNegativeArgumentException(){}
+	public IllegalNegativeArgumentException(String message){
+		super(message);
+	}
+
+}//class
+
+
+public class Assignment5 {
+	public static void main(String args[]){
+		Shape[] ms = new Shape[10];
+		ms[0]= new Circle(5);
+		ms[1] = new Rectangle(3,4);
+		ms[2] = new RightTriangle(5,6);
+		ms[3] = new Square(7);
+		int average = 0;
+		for(int i=0;i<4;i++){
+			ms[i].calculate();
+			average += ms[i].getArea();
+		}
+		System.out.println(average/4);
+		
+		//testing resetDimension on each shape:
+		Square a = new Square(2);
+		a.calculate();
+		a.resetDimensions();
+		System.out.println(a.getArea());
+		
+		Rectangle b = new Rectangle(2,5);
+		b.calculate();
+		b.resetDimensions();
+		System.out.println(b.getArea());
+		
+		Circle c = new Circle(7);
+		c.calculate();
+		c.resetDimensions();
+		System.out.println(c.getArea());
+		
+		RightTriangle d = new RightTriangle(6,7);
+		d.calculate();
+		d.resetDimensions();
+		System.out.println(d.getArea());
+	}
+}//class
+
+
+
+
+
+
