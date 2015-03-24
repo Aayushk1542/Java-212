@@ -1,0 +1,443 @@
+
+public class Node {
+	private int data;
+	private Node next;
+	
+	public Node(int d){
+		data = d;
+	}
+	
+	public Node(int d, Node n){
+		data = d;
+		next = n;
+	}
+	
+	public int getData() {return data;	}
+	public Node getNext() {return next; }
+	
+	public void setNext(Node n) {next = n;}
+	
+}
+
+public class LinkedList {
+protected Node head;
+protected int count;	
+	public LinkedList(Node n){
+		head =n;
+	}
+
+	
+	public LinkedList(int x){
+		head = new Node(x);
+	}
+	
+	public void append(int x) {
+		Node current = head;
+		while (current.getNext()!=null){
+			current = current.getNext();
+		}
+		current.setNext(new Node(x));
+	}
+	
+	public void insert(int x) {
+		if(head.getData()>x){ // case 1: insert before head
+			head = new Node(x, head);
+		} else {
+			Node current = head;
+			Node previous = head;
+			while (current!=null){
+				if (current.getData()>x){ // case 2: insert into the middle of the list
+					previous.setNext(new Node(x, current));
+					// Node temp = new Node(x, current);
+				//	previous.setNext(temp);
+					break;
+				} else {
+					previous = current;
+					current = current.getNext();
+				} // else
+			} // end of while
+			if(current == null){ // case 3: insert after list
+				previous.setNext(new Node(x));
+			} // if 
+		} // else
+	} // insert method
+	
+	public boolean delete(int x){
+		if(x==head.getData()){
+			head = head.getNext();
+			return true;
+		}
+		Node current = head;
+		Node previous = head;
+		while (current!=null){
+			if (current.getData()==x){ // case 2: delete from the middle or from the end
+				previous.setNext(current.getNext());
+				return true;
+			} else if(current.getData()>x)  {
+				return false;
+			} else {
+				previous = current;
+				current = current.getNext();
+			}
+		}// while
+		return false;
+	} // delete method
+	
+}
+
+
+
+public class GSSArray {
+	
+	protected int[] a;
+	protected int lastindex;
+	
+	public GSSArray(int x){
+		a=new int[x];
+  
+	}//constructor
+	
+	//method to insert variable x into array
+	public void insert(int x){
+		//lastindex must be set to 0 first time
+		if(a[0]==0){
+			a[0]=x;
+			lastindex=0;
+		}//if: is first slot empty
+		else{//when its not empty
+		//test to see if the array is full, and double if necessary
+		if((a[a.length-1])!=0){
+			increaseSize();
+		}//if:full
+		//Now insert x in the proper place:
+		//First find which slot x belongs in:
+		//3 case:1)first 2)middle 3)end
+		//first:
+		if(x<=a[0]){
+			for(int k=lastindex;k>=0;k--){
+				a[k+1]=a[k];
+			}//for
+			a[0]=x;
+		}//if: first
+		else if(x>a[lastindex]){//third:
+			a[lastindex+1]=x;	
+		}//else if:third
+		else{//second:
+		//need to find exact position x belongs
+			for(int i=lastindex;i>=0;i--){
+				if(x>a[i]){
+					for(int j=lastindex;j>i;j--){
+						a[j+1]=a[j];
+					}//for: pushing back all numbers after correct slot	
+				a[i+1]=x;	
+				break;
+			}//if: x>a[i]
+			
+		}//for:where x belongs
+		
+		}//else second
+		lastindex++;//the index increases by one if x is inserted
+		}//else: when a[0] is not empty	
+	}//method
+	
+	//method to double the array
+	protected void increaseSize(){
+		int[]temp=new int[a.length];//making an identical copy
+		for(int i=0;i<a.length;i++){
+			temp[i]=a[i];
+		}//for: copying a to copy
+		a = new int[temp.length*2];//doubling a
+		for(int i=0;i<temp.length;i++){
+			a[i]=temp[i];
+		}//for: copying back to a
+	}
+	
+	//method to delete variable x from array
+	public boolean delete(int x){
+		for(int i=0;i<a.length;i++){
+			if(a[i]==x){
+				//if a number is found, all numbers past it must be brought in
+				for(int j=i;j<lastindex;j++){
+					a[j]=a[j+1];
+				}//for:moving everything down
+				a[lastindex]=0;
+				lastindex--;
+				return true;
+			}//if: its found
+		}//for: finding x
+		return false;
+	}//method
+}//class
+
+
+
+public class DynamicQueue extends LinkedList {
+	private Node tail;
+	public DynamicQueue(int x){
+		super(x);
+		head=new Node(x);
+		tail=head;
+		count = 1;
+	}
+  public void insert(int x){
+	  if(head!=null){
+		  if(head.getNext()==null){
+			  Node temp = new Node(x);
+			  tail=temp;
+			  head.setNext(tail);
+			  count++;
+		  } else {
+			  Node temp = new Node(x);
+			  tail.setNext(temp);
+			  tail=temp;
+			  count++;
+		  }
+	  } else {
+		  head = new Node(x);
+		  count=1;
+	  }
+	  
+  }
+  public boolean delete(int x){
+	  Boolean test = false;
+	  if(x>0){
+		  for(int i=0;i<x;i++){
+			  if(head!=null){
+				  head = head.getNext();
+				  count--;
+				  test=true;
+			  } 
+		  
+		  }
+	  }
+		  return test;
+	  
+  }
+  public void clearAll(){
+		int index = count;
+		for(int i=0;i<index;i++){
+			System.out.println(head.getData());
+			delete(1);
+		}
+	}
+  public void print(){
+	  Node current = head;
+	  if(head!=null){
+		 for(int i=0;i<count;i++){
+			 System.out.println(current.getData());
+			 current=current.getNext();
+		 }
+	  }
+  }
+
+}//class
+
+
+
+public class DynamicStack extends LinkedList {
+
+	public DynamicStack(int x){
+		super(x);
+		head=new Node(x);
+		count=1;
+	}
+	public void insert(int x){
+		if(head!=null){
+			Node temp = new Node(x);
+			temp.setNext(head);
+			head=temp;
+			count++;
+		} else {
+			head = new Node(x);
+			count=1;
+		}
+	}
+	public boolean delete(int x){
+		Boolean test = false;
+		if(x>0){
+			for(int i=0;i<x;i++){
+				if(head!=null){
+					head=head.getNext();
+					count--;
+					test=true;
+				} 
+			}
+		}
+		return test;
+	}
+	public void clearAll(){
+		int index = count;
+		for(int i=0;i<index;i++){
+			System.out.println(head.getData());
+			delete(1);
+		}
+	}
+	public void print(){
+		Node current = head;
+		for(int i=0;i<count;i++){
+			System.out.println(current.getData());
+			current=current.getNext();
+		}
+	}
+  
+}//class
+
+
+public class StaticQueue extends GSSArray {
+	private int lastindex;
+	
+    public StaticQueue(int x){
+    	super(x);
+    	a = new int[x];
+	}
+		
+	public void insert(int x){
+		if(a[a.length-1]!=0){
+			increaseSize();
+		}
+		a[lastindex]=x;
+
+		lastindex++;
+	}
+	public boolean delete(int x){
+		boolean test = false;
+		for(int i=0;i<x;i++){
+			if(a[0]!=0){
+				for(int j=0;j<lastindex; j++){
+					if((j+1)==lastindex){
+						a[j]=0;
+					} else {
+					a[j]=a[j+1];
+					}
+				}
+				lastindex--;
+				test = true;
+			}
+		}	
+		return test;
+	}
+	public void clearAll(){
+		int temp = lastindex;
+		for(int i=0;i<temp;i++){
+			System.out.println(a[0]);
+			delete(1);
+		}	
+	}
+	public void print(){
+		int temp = lastindex;
+		for(int i=0;i<temp;i++){
+			System.out.println(a[i]);
+		}
+	}
+}//class
+
+
+public class StaticStack extends GSSArray {
+	private int lastindex;
+	
+    public StaticStack(int x){
+    	super(x);
+    	a = new int[x];
+	}
+		
+	public void insert(int x){
+		if(a[a.length-1]!=0){
+			increaseSize();
+		}
+		for(int i=lastindex;i>0;i--){
+			a[i]=a[i-1];
+		}
+		a[0]=x;
+		lastindex++;
+	}
+	public boolean delete(int x){
+		boolean test = false;
+		for(int i=0;i<x;i++){
+			for(int j=0;j<lastindex;j++){
+				if((j+1)==lastindex){
+					a[j]=0;
+				} else {
+					a[j]=a[j+1];
+				}
+			}
+			lastindex--;
+			test=true;
+		}	
+		return test;
+	}
+	public void clearAll(){
+		int temp = lastindex;
+		for(int i=0;i<temp;i++){
+			System.out.println(a[0]);
+			delete(1);
+		}	
+	}
+	public void print(){
+		int temp = lastindex;
+		for(int i=0;i<temp;i++){
+			System.out.println(a[i]);
+		}
+	}
+}//class
+
+public class Assignment4 {
+	public static void main(String args[]){
+		DynamicStack s1 = new DynamicStack(18);
+		DynamicQueue q1 = new DynamicQueue(18);
+		StaticStack ss1 = new StaticStack(4);
+		StaticQueue sq1 = new StaticQueue(4);
+		
+		s1.insert(3);
+		s1.insert(7);
+		s1.insert(36);
+		s1.insert(9);
+		s1.insert(14);
+		s1.delete(2);
+		s1.clearAll();
+		s1.insert(1);
+		s1.print();
+		s1.clearAll();
+
+		q1.insert(3);
+		q1.insert(7);
+		q1.insert(36);
+		q1.insert(9);
+		q1.insert(14);
+		q1.delete(2);
+		q1.clearAll();
+		q1.insert(1);
+		q1.print();
+		q1.clearAll();
+
+		ss1.insert(18);
+		ss1.insert(3);
+		ss1.insert(7);
+		ss1.insert(36);
+		ss1.insert(9);
+		ss1.insert(14);
+		ss1.delete(2);
+		ss1.clearAll();
+		ss1.insert(1);
+		ss1.print();
+		ss1.clearAll();
+
+		sq1.insert(18);
+		sq1.insert(3);
+		sq1.insert(7);
+		sq1.insert(36);
+		sq1.insert(9);
+		sq1.insert(14);
+		sq1.delete(2);
+		sq1.clearAll();
+		sq1.insert(1);
+		sq1.print();
+		sq1.clearAll();
+
+
+	}
+}//class
+
+
+
+
+
