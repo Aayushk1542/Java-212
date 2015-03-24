@@ -1,0 +1,373 @@
+
+import javax.swing.*;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.util.concurrent.CountDownLatch;
+
+public class InputMessage extends JFrame{
+	private JFrame frame;
+	private String reme1;
+	private String reme2;
+	private JTextField text1 = new JTextField(10);
+	private JTextField text2 = new JTextField(10);
+	private JButton button = new JButton("submit");
+	private Boolean done = false;
+	
+	public InputMessage(String a, String b){
+		frame = new JFrame("Notice:");
+		frame.setVisible(true);
+		frame.setSize(600,200);
+		frame.setLocation(500,300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JLabel label = new JLabel("What do you want to set the "+a+" and "+b+" to?");
+		JPanel panel = new JPanel();
+		frame.add(panel);
+		panel.add(label);
+		
+		panel.add(text1);
+		panel.add(text2);
+		panel.add(button);
+		button.addActionListener(new Action());
+	}
+	public InputMessage(String a){
+		frame = new JFrame("Notice:");
+		frame.setVisible(true);
+		frame.setSize(600,200);
+		frame.setLocation(500,300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JLabel label = new JLabel("What do you want to set the "+a+" to?");
+		JPanel panel = new JPanel();
+		frame.add(panel);
+		panel.add(label);
+		
+		panel.add(text1);
+		panel.add(button);
+		button.addActionListener(new Action());
+	}
+	
+	public String getReme1(){
+		return reme1;
+	}
+	public String getReme2(){
+		return reme2;
+	}
+	public Boolean ready(){
+		return done;
+	}
+    public class Action implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			reme1 = text1.getText();
+			reme2 = text2.getText();
+			done=true;
+			frame.dispose();
+		}
+    }
+    
+}//class
+
+public class ShowMessage extends JFrame {
+	private JFrame frame;
+	private Boolean done = false;
+	public ShowMessage(String s){	
+		initiate(s);
+	}	
+	public void initiate(String a){
+		frame = new JFrame("Notice:");
+		frame.setVisible(true);
+		frame.setSize(600,200);
+		frame.setLocation(500,300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JLabel label = new JLabel(a);
+		JPanel panel = new JPanel();
+		frame.add(panel);
+		panel.add(label);
+		
+		JButton button = new JButton("ok");
+		panel.add(button);
+		button.addActionListener(new Action());;
+	}
+	public Boolean isReady(){
+		return done;
+	}
+	  public class Action implements ActionListener{
+			public void actionPerformed(ActionEvent e){
+				done = true;
+				frame.dispose();
+			}
+	    }
+}//class
+
+public class IllegalNegativeArgumentException extends IllegalArgumentException {
+	public IllegalNegativeArgumentException(){}
+	public IllegalNegativeArgumentException(String message){
+		super(message);
+	}
+}//class
+
+
+public abstract class Shape {
+	protected int area;
+	protected int perimeter;
+	
+	public int getArea(){
+		return area;
+	}
+	public int getPerimeter(){
+		return perimeter;
+	}
+	public abstract void calculate();
+	public abstract void resetDimensions();
+
+}//class
+
+
+public class Square extends Shape{
+	private int side;
+	private ShowMessage h;
+
+	public Square(int x){
+		
+		try{
+			if (x<=0){
+				throw new IllegalNegativeArgumentException("The number entered is too small. It must be greater then zero");
+			} else {
+				side = x;
+			}
+		} catch (IllegalNegativeArgumentException inae){
+			System.out.println("The number entered is too small. So the length will be set to 1 by default");
+			side = 1;
+		}
+		calculate();
+	}
+	public void calculate(){
+		area = side*side;
+		perimeter = side*4;
+		
+	}
+	public void resetDimensions(){
+		String a;
+		InputMessage i = new InputMessage("side");
+		try { 
+			while(!i.ready()){
+	    		Thread.sleep(200);
+	    	}
+	    	a = i.getReme1();
+			side = Integer.parseInt(a);
+			if (side<=0){
+				throw new IllegalNegativeArgumentException("The number entered is too small. It must be greater then zero");
+			} else {	
+			calculate();
+			}
+		} catch (NumberFormatException nfe){
+			h = new ShowMessage("You did not enter a number for side length, so no changes were made");
+			waitForMessage();
+		} catch (IllegalNegativeArgumentException inae){
+			h = new ShowMessage("The number entered is too small. It must be greater then zero");
+			waitForMessage();
+
+		} catch (InterruptedException e){
+		}
+	}
+	public void waitForMessage(){
+		try{
+			while(!h.isReady()){
+				Thread.sleep(200);
+			}
+		} catch (InterruptedException e){
+		}
+	}
+
+}//class
+
+
+public class RightTriangle extends Shape {
+	private double base;
+	private double height;
+	private ShowMessage h;
+
+	
+	public RightTriangle(int x,int y){
+		try{
+		if (x<=0||y<=0){
+			throw new IllegalNegativeArgumentException("The numbers entered are too small. They must both be greater then zero");
+		} else {
+			base = x;
+			height = y;
+		}
+		} catch (IllegalNegativeArgumentException inae){
+			System.out.println("The number entered is too small. So the base and height will be set to 1 by default");
+			base = 1;
+			height = 1;
+		}
+		calculate();
+	}
+	public void calculate(){
+		area = (int) ((base*height)/2);
+		perimeter = (int) (base+height+(Math.sqrt((base*base)+(height*height))));
+		
+	}
+	public void resetDimensions(){
+		String a;
+		String b;
+		 InputMessage i = new InputMessage("base","height");
+		   try{
+		    	while(!i.ready()){
+		    		Thread.sleep(200);
+		    	}
+		    	a = i.getReme1();
+		    	b = i.getReme2();
+			base = Integer.parseInt(a);
+			height = Integer.parseInt(b);
+			if (base<=0||height<=0){
+				throw new IllegalNegativeArgumentException("One of the two numbers entered is too small. It must be greater then zero");
+			} else {	
+			calculate();
+			}
+		} catch (NumberFormatException nfe){
+			h = new ShowMessage("You did not enter a number for base and/or height, so no changes were made");
+			waitForMessage();
+
+		} catch (IllegalNegativeArgumentException inae){
+			h = new ShowMessage("One of the two numbers entered is too small. It must be greater then zero");
+			waitForMessage();
+
+		} catch (InterruptedException e){
+			
+		}
+	}
+	public void waitForMessage(){
+		try{
+			while(!h.isReady()){
+				Thread.sleep(200);
+			}
+		} catch (InterruptedException e){
+		}
+	}
+
+}//class
+
+
+public class Rectangle extends Shape{
+	private int width;
+	private int length;
+	private ShowMessage h;
+
+	public Rectangle(int x,int y){
+		try{
+		if (x<=0||y<=0){
+			throw new IllegalNegativeArgumentException("The numbers entered are too small. They must both be greater then zero");
+		} else {
+			width = x;
+			length = y;
+		}
+		} catch (IllegalNegativeArgumentException inae){
+			System.out.println("The number entered is too small. So the length and width will be set to 1 by default");
+			length = 1;
+			width = 1;
+		}
+		calculate();
+	}
+	public void calculate(){
+		area = length*width;
+		perimeter = (length*2)+(width*2);
+		
+	}
+	public void resetDimensions(){
+		String a = null;
+		String b = null;
+	    InputMessage i = new InputMessage("width","length");
+	    try{
+	    	while(!i.ready()){
+	    		Thread.sleep(200);
+	    	}
+	    	a = i.getReme1();
+	    	b = i.getReme2();
+	   
+			width = Integer.parseInt(a);
+			length = Integer.parseInt(b);
+			if (width<=0||length<=0){
+				throw new IllegalNegativeArgumentException("One of the numbers entered is too small. It must be greater then zero");
+			} else {	
+			calculate();
+			}
+			
+		} catch (NumberFormatException nfe){
+			h = new ShowMessage("You did not enter a number for with and/or height, so no changes were made");
+			waitForMessage();
+
+		} catch (IllegalNegativeArgumentException inae){
+			h = new ShowMessage("One of the two numbers entered is too small. It must be greater then zero");
+			waitForMessage();
+
+		} catch(InterruptedException e){   
+		}
+	}
+	public void waitForMessage(){
+		try{
+			while(!h.isReady()){
+				Thread.sleep(200);
+			}
+		} catch (InterruptedException e){
+		}
+	}
+}//class
+
+
+public class Circle extends Shape {
+	private double radius;
+	private ShowMessage h;
+	public Circle(int x){
+		try{
+		if (x<=0){
+			throw new IllegalNegativeArgumentException("The number entered is too small. It must be greater then zero");
+		} else {
+			radius = x;
+		}}
+		catch(IllegalNegativeArgumentException inae){
+			System.out.println("The number entered is too small. So the radius will be set to 1 by default");
+			radius = 1;
+		}
+		calculate();
+	}
+	public void calculate(){
+		area = (int) ((3.14)*radius*radius);
+		perimeter = (int) ((6.28)*radius);
+		
+	}
+	public void resetDimensions(){
+		String a = null;
+		InputMessage i = new InputMessage("radius");
+		try { 
+			while(!i.ready()){
+	    		Thread.sleep(200);
+	    	}
+	    	a = i.getReme1();
+	    	radius = Integer.parseInt(a);
+			if (radius<=0){
+				throw new IllegalNegativeArgumentException("The number entered is too small. It must be greater then zero");
+			} else {		
+			calculate();
+			}
+		} catch (NumberFormatException nfe){
+			h = new ShowMessage("You did not enter a number for radius, so no changes were made");
+			waitForMessage();
+		} catch (IllegalNegativeArgumentException inae){
+			h = new ShowMessage("The number entered is too small. It must be greater then zero");
+			waitForMessage();
+		} catch (InterruptedException e){
+		}
+	}
+	public void waitForMessage(){
+		try{
+			while(!h.isReady()){
+				Thread.sleep(200);
+			}
+		} catch (InterruptedException e){
+		}
+	}
+
+}//class
