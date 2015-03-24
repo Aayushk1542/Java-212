@@ -1,0 +1,117 @@
+
+public class Node2 {
+	private int data;
+	private Node2 next;
+	private Node2 pre;
+	
+	public Node2(int d){
+		data = d;
+	}
+	
+	public Node2(int d, Node2 n){
+		data = d;
+		next = n;
+	}
+	public Node2(int d, Node2 n, Node2 p){
+		data = d;
+		next = n;
+		pre = p;
+	}
+	
+	public int getData() {return data;	}
+	public Node2 getNext() {return next; }
+	public Node2 getPrevious() {return pre;}
+	
+	public void setNext(Node2 n) {next = n;}
+	public void setPrevious(Node2 p) {pre=p;}
+}
+
+
+public class LinkedList2 {
+
+private Node2 head;
+private Node2 last;
+
+public LinkedList2(Node2 n){
+	head =n;
+	last = head;
+}
+
+public LinkedList2(int x){
+	head = new Node2(x);
+	last = head;
+}
+
+public void insert(int x){
+	if(x<head.getData()){ // case 1: insert before head
+		head = new Node2(x, head);
+		head.getNext().setPrevious(head);
+	} else {
+		Node2 current = head.getNext();
+		while(current!=null){
+			if (x<current.getData()){ // case 2: insert into the middle of the list
+				current.setPrevious(new Node2(x, current, current.getPrevious()));
+				current.getPrevious().getPrevious().setNext(current.getPrevious());
+				// Node2 temp = new Node2(x, current, current.getPrevious());
+				//current.setPrevious(temp);
+				//temp.getPrevious().setNext(temp);
+				
+				return;
+			} else {
+				current = current.getNext();
+			}
+			
+		} // while
+		// case 3: append to the end of the list
+		last = new Node2(x, null, last);
+		last.getPrevious().setNext(last);
+	}
+}
+public boolean delete(int x){
+	if(x==head.getData()){
+		head = head.getNext();
+		if(head!=null){
+		head.setNext(head.getNext());
+		}
+		return true;
+	}
+	Node2 current = head;
+	Node2 previous = head;
+	while (current!=null){
+		if (current.getData()==x){ // case 2: delete from the middle or from the end
+			if (current.getNext()!=null){
+				current.getNext().setPrevious(current.getPrevious());
+			}
+			previous.setNext(current.getNext());
+			last = previous;
+			last.getPrevious().setNext(last);
+			return true;
+		} else if(current.getData()>x)  {
+			return false;
+		} else {
+			previous = current;
+			current = current.getNext();
+			
+		}
+	}// while
+	return false;
+} // delete method
+public Node2 find(int x){
+	Node2 current = head;
+	while (current!=null){
+		if(current.getData()==x){
+			return current;
+		}
+		else{
+			current = current.getNext();
+		}
+	}
+		Node2 wrong = new Node2(-x);
+		return wrong;
+
+}
+
+
+}
+
+
