@@ -1,6 +1,8 @@
 # Java-211
 Programs written for my Java Object-Oriented Program class
+
 These are the assignments given:
+
 Assignment 1:
 Part a)
 
