@@ -1,0 +1,194 @@
+import java.io.*;
+import java.util.*;
+
+public class Node {
+	private int data;
+	private Node next;
+	
+	public Node(int d){
+		data = d;
+	}
+	
+	public Node(int d, Node n){
+		data = d;
+		next = n;
+	}
+	
+	public int getData() {return data;	}
+	public Node getNext() {return next; }
+	
+	public void setNext(Node n) {next = n;}
+	
+	public int sum(){
+		if (this.next==null){
+			return this.data;
+		} else {
+			return this.data + next.sum();
+		}
+	}
+	
+	public void printBackwards(PrintWriter a){
+		if(this.next==null){
+			a.println(this.data);
+		} else {
+			next.printBackwards(a);
+			a.println(this.data);	
+			
+		}
+	}
+	
+}//class
+
+public class LinkedList {
+protected Node head;
+protected int count;	
+	public LinkedList(Node n){
+		head =n;
+		count = 1;
+	}
+
+	
+	public LinkedList(int x){
+		head = new Node(x);
+		count = 1;
+	}
+	
+	public void append(int x) {
+		Node current = head;
+		while (current.getNext()!=null){
+			current = current.getNext();
+		}
+		current.setNext(new Node(x));
+		count++;
+	}
+	
+	public void insert(int x) {
+		if(head.getData()>x){ // case 1: insert before head
+			head = new Node(x, head);
+		} else {
+			Node current = head;
+			Node previous = head;
+			while (current!=null){
+				if (current.getData()>x){ // case 2: insert into the middle of the list
+					previous.setNext(new Node(x, current));
+					// Node temp = new Node(x, current);
+				//	previous.setNext(temp);
+					break;
+				} else {
+					previous = current;
+					current = current.getNext();
+				} // else
+			} // end of while
+			if(current == null){ // case 3: insert after list
+				previous.setNext(new Node(x));
+			} // if 
+		} // else
+		count++;
+	} // insert method
+	
+	public boolean delete(int x){
+		if(x==head.getData()){
+			head = head.getNext();
+			count--;
+			return true;
+		}
+		Node current = head;
+		Node previous = head;
+		while (current!=null){
+			if (current.getData()==x){ // case 2: delete from the middle or from the end
+				previous.setNext(current.getNext());
+				count--;
+				return true;
+			} else if(current.getData()>x)  {
+				return false;
+			} else {
+				previous = current;
+				current = current.getNext();
+			}
+		}// while
+		return false;
+	} // delete method
+	public void sum(int x) throws IOException{
+		String filename = "output.txt";
+		PrintWriter otf = new PrintWriter(
+						 new BufferedWriter(
+						 new OutputStreamWriter(
+						 new FileOutputStream(filename))));
+
+		if(x<1){
+			otf.println(0);
+		} else if(x>count) {
+			otf.close();
+			throw new NumberFormatException("There are not that many nodes");
+		} else {
+			Node current = head;
+			for(int i=1;i<x;i++){
+				current=current.getNext();
+			}
+			otf.println(current.sum());
+		}
+		otf.close();
+	}
+	public void print(){
+		while (head!=null){
+			System.out.println(head.sum());
+			head=head.getNext();
+		}
+	}
+	public void printB() throws IOException{
+		String filename = "outputBack.txt";
+		PrintWriter otfb = new PrintWriter(
+						 new BufferedWriter(
+						 new OutputStreamWriter(
+						 new FileOutputStream(filename))));
+		head.printBackwards(otfb);
+		otfb.close();
+
+	}
+}//class
+
+
+public abstract class Shape implements Comparable<Shape> {
+	protected int area;
+	protected int perimeter;
+	
+	public int getArea(){
+		return area;
+	}
+	public int getPerimeter(){
+		return perimeter;
+	}
+	public abstract void calculate();
+	public abstract void resetDimensions();
+	
+	public int compareTo(Shape other){
+		return (this.area - other.getArea());
+	}
+}//class
+
+
+public class Assignment7 {
+	public static void main(String args[]) throws IOException{
+		
+		LinkedList a = new LinkedList(6);
+		String filename = "input.txt";
+		BufferedReader br = new BufferedReader(
+			new InputStreamReader(
+			new FileInputStream(filename)));
+		String line;
+		while((line = br.readLine())!=null){
+			
+			StringTokenizer st = new StringTokenizer(line, ";");
+			while(st.hasMoreTokens()){
+				a.append(Integer.parseInt(st.nextToken()));
+			}
+		}
+	br.close();
+	a.sum(4);
+	a.printB();
+	}
+}//class
+
+
+
+
